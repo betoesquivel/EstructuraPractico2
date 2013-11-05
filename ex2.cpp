@@ -36,6 +36,7 @@ public:
 		int cuenta () { return contar(raiz); }
 		int altura () { return niveles(raiz); }
 		double promedioComparaciones (NodoArbol<T>* raiz, int comparaciones, int nodos);
+		int sumaComparacionesCorreccion (NodoArbol<T>* raiz, int comparaciones);
 		bool busqueda (T dato);
 		~ABB() { libera(raiz); }
 };
@@ -51,6 +52,20 @@ double ABB<T>::promedioComparaciones (NodoArbol<T>* raiz, int comparaciones, int
 		);
 	}else{
 		return 0.0;
+	}
+}
+
+template <class T>
+int ABB<T>::sumaComparacionesCorreccion (NodoArbol<T>* raiz, int comparaciones)
+{
+	if (raiz != NULL) {
+		return (
+			 comparaciones 
+			 + sumaComparacionesCorreccion(raiz->izq, comparaciones+1)
+			 + sumaComparacionesCorreccion(raiz->der, comparaciones+1)
+		);
+	}else{
+		return 0;
 	}
 }
 
@@ -227,6 +242,7 @@ public:
 	void inserta2 (T dato);
 	void despliega ();
 	double promedioComparaciones ();
+	double promedioComparacionesCorreccion ();
 	double promedioComparacionesListaSecuencial ();
 };
 
@@ -262,6 +278,23 @@ double tablaHash<T>::promedioComparaciones()
 		indice++;
 	}
 	return suma/contador;
+}
+
+template <class T>
+double tablaHash<T>::promedioComparacionesCorreccion()
+{
+	int indice = 0;
+	double tempPromedioBucket = 0, suma = 0;
+	while (indice < TAM) {
+		tempPromedioBucket = 0;
+		if(tabla[indice].cuenta() != 0 ){
+			tempPromedioBucket = tabla[indice].sumaComparacionesCorreccion(tabla[indice].getRaiz(), 1);
+			suma += tempPromedioBucket;
+		}
+		indice++;
+	}
+	cout<<"Cantidad de datos: "<<cantidad<<endl;
+	return suma/cantidad;
 }
 
 template <class T>
@@ -333,6 +366,7 @@ int main()
 	cout<<"Esta es la tabla Hash 1"<<endl;	
 	tabla.despliega();
 	cout<<"Promedio de comparaciones: "<<tabla.promedioComparaciones()<<endl;
+	cout<<"Promedio de comparaciones correccion: "<<tabla.promedioComparacionesCorreccion()<<endl;
 	cout<<"Promedio de comparaciones lista secuencial: "<<tabla.promedioComparacionesListaSecuencial()<<endl;
 
 	// cout<<"Esta es la tabla Hash 2"<<endl;	
