@@ -293,7 +293,6 @@ double tablaHash<T>::promedioComparacionesCorreccion()
 		}
 		indice++;
 	}
-	cout<<"Cantidad de datos: "<<cantidad<<endl;
 	return suma/cantidad;
 }
 
